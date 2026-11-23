@@ -50,16 +50,11 @@
 ## 截图
 
 模拟器截图取自 iPad Pro 11 英寸（M5，iPadOS 27.2）；登录、四象限、列表、日历、统计与设置如下。
-登录
-列表
-日历
-登录页
-列表视图
-日历视图
-统计
-设置
-统计页
-设置面板
+docs/screenshots/01-quadrant.png
+docs/screenshots/02-list.png
+docs/screenshots/03-calendar.png
+docs/screenshots/04-stats.png
+docs/screenshots/05-settings.png
 
 ## 环境要求
 

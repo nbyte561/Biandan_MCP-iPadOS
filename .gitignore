@@ -1,0 +1,18 @@
+# 构建产物
+.build/
+.swiftpm/
+build/
+dist/
+
+# Xcode / 编辑器
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+*.xcuserstate
+
+# macOS
+.DS_Store
+
+# 本地 vendor（用 BIANDAN_VENDOR_GRDB=1 时才存在，不随仓库分发）
+vendor/

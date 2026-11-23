@@ -202,3 +202,6 @@ macOS 版 `SettingsView.swift` 体积为 62 KB。iPad 版重写为精简面板�
 - 全部业务逻辑与界面设计均来自 [yingcaihuang/biandan\_MCP-main](https://github.com/yingcaihuang/biandan_MCP-main) 的 `BiandanMac/`，本仓库仅负责平台移植。若无上游代码，本仓库将无从谈起。
 - **上游仓库未提供 LICENSE 文件**，因此本仓库亦不单独声明许可证，且不构成对上游代码的再授权；如需商用或将本代码再分发至其他产品，建议先与原作者确认。详见 [NOTICE.md](NOTICE.md)。
 - 本仓库为社区移植项目，与华为及便单官方均无隶属关系；「便单」名称与图标的相关权利归原作者所有。
+
+
+本项目由AI移植，若有不足之处，还请见谅

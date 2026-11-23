@@ -50,12 +50,11 @@
 ## 截图
 
 模拟器截图取自 iPad Pro 11 英寸（M5，iPadOS 27.2）；登录、四象限、列表、日历、统计与设置如下。
-docs/screenshots/01-quadrant.png
-docs/screenshots/02-list.png
-docs/screenshots/03-calendar.png
-docs/screenshots/04-stats.png
-docs/screenshots/05-settings.png
-
+![四象限主界面](docs/screenshots/01-quadrant.png)
+![列表](docs/screenshots/02-list.png)
+![日历](docs/screenshots/03-calendar.png)
+![统计](docs/screenshots/04-stats.png)
+![设置](docs/screenshots/05-settings.png)
 ## 环境要求
 
 - macOS 与 Xcode 27。本仓库已在 Xcode 27.2 / Swift 6.4.2 环境下验证；理论上兼容 Xcode 15 及以上版本与 Swift 5.9 工具链，但尚未验证。

@@ -23,13 +23,13 @@ struct ImportView: View {
                      tint: Quadrant.notImportantUrgent.tint, available: true),
         ImportOption(id: "mail", icon: "envelope", title: "添加邮箱账户",
                      detail: "读取 Mac「互联网账户」里已登录的 Exchange、Google、QQ、163 等邮箱日历，定时自动同步",
-                     tint: Color(hex: 0x8E5BD6), available: true),
+                     tint: Theme.purple, available: true),
         ImportOption(id: "url", icon: "link", title: "URL 导入",
                      detail: "粘贴 webcal:// 或 https://….ics 订阅地址，和 CalDAV 一样定时刷新",
                      tint: Quadrant.neither.tint, available: true),
         ImportOption(id: "file", icon: "doc.badge.plus", title: "从文件中导入",
                      detail: "选择 .ics 文件，或直接拖到这个页面；再次导入同一文件只更新，不会重复",
-                     tint: Color(hex: 0xFA8B36), available: true),
+                     tint: Theme.orange, available: true),
     ]
 
     var body: some View {
@@ -185,10 +185,10 @@ struct ImportView: View {
             Image(systemName: "doc.badge.plus").font(.system(size: 30, weight: .semibold))
             Text("松开导入 .ics 文件").font(.system(size: 14, weight: .bold))
         }
-        .foregroundStyle(Color(hex: 0xFA8B36))
+        .foregroundStyle(Theme.orange)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(shape.fill(Theme.card.opacity(0.92)))
-        .overlay(shape.stroke(Color(hex: 0xFA8B36), style: StrokeStyle(lineWidth: 2, dash: [6, 4])))
+        .overlay(shape.stroke(Theme.orange, style: StrokeStyle(lineWidth: 2, dash: [6, 4])))
         .padding(16)
         .allowsHitTesting(false)
     }

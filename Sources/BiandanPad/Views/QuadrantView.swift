@@ -172,6 +172,6 @@ private struct CurrentQuadrantTag: View {
         .padding(.horizontal, 7)
         .frame(height: 18)
         .floatingSurface(Capsule(), fill: tint.opacity(0.14), border: tint.opacity(0.5), shadowRadius: 0,
-                         glassTint: tint.opacity(0.22), glassBorder: true)
+                         glassTint: tint.opacity(0.22), glassBorder: true, interactive: false)
     }
 }

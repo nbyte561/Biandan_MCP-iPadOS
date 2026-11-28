@@ -37,7 +37,7 @@ struct OccurrenceListView: View {
                             }
                         } header: {
                             SectionHeader(title: section.title, count: section.items.count,
-                                          color: section.id == Self.overdueKey ? Theme.overdue : Color(hex: 0x4A453C))
+                                          color: section.id == Self.overdueKey ? Theme.overdue : Theme.label)
                         }
                     }
                     if !done.isEmpty {

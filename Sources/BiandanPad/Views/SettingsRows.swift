@@ -35,7 +35,7 @@ struct SettingRow<Content: View>: View {
         .padding(.vertical, 8)
         .frame(minHeight: 40)
         .overlay(alignment: .top) {
-            Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1)
+            Rectangle().fill(Theme.hairline).frame(height: 1)
         }
     }
 }
@@ -83,7 +83,7 @@ struct SettingFootnotes: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Theme.panel)
         .overlay(alignment: .top) {
-            Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1)
+            Rectangle().fill(Theme.hairline).frame(height: 1)
         }
     }
 }

@@ -77,6 +77,6 @@ struct ImportSourceRow: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 9)
-        .overlay(alignment: .top) { Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1) }
+        .overlay(alignment: .top) { Rectangle().fill(Theme.hairline).frame(height: 1) }
     }
 }

@@ -1,15 +1,17 @@
 import SwiftUI
 
-/// 右侧检查器。P3 只读，逐项展示四张表的全部字段，旁边标注云端字段名。
+/// 详情面板。P3 只读，逐项展示四张表的全部字段，旁边标注云端字段名。
+/// iPad 上它装在弹窗里（`InspectorSheet`），macOS 版挂在 detail 栏的 `.inspector` 里。
 struct InspectorView: View {
     @Environment(AppModel.self) private var model
 
     var body: some View {
-        // 检查器挂在 detail 栏的 .inspector 里时，滚动区按顶部工具栏自动让出的那段空白只算进了画面、
-        // 没算进点击区域，整栏点击位置比画面高一个工具栏（按钮点不中、点「开始」落到「结束」）。
-        // 所以不让滚动区自己避让：整栏忽略顶部安全区，再用普通内边距把内容推到工具栏下方，
-        // 画面和点击区域一起移动。高度从安全区读取，不写死。
-        // 注意：上边距必须加在滚动内容里面。加在滚动区外面时，滚动区仍会自己再让一次（实测又错开 52pt）。
+        // 顶部安全区按实际让出的高度手工补内边距，画面和点击区域才不会错开：
+        // 挂在 macOS 的 .inspector 栏里时，滚动区自己避让只算进画面、不算点击区域
+        // （按钮点不中、点「开始」落到「结束」）；iPad 弹窗里这段高度就是导航栏。
+        // 所以不让滚动区自己避让：整栏忽略顶部安全区，再用普通内边距把内容推到栏下方。
+        // 高度从安全区读取，不写死。上边距必须加在滚动内容里面，加在滚动区外面时
+        // 滚动区仍会自己再让一次（实测又错开 52pt）。
         GeometryReader { proxy in
             content
                 .environment(\.inspectorTopInset, proxy.safeAreaInsets.top)
@@ -33,7 +35,7 @@ struct InspectorView: View {
 }
 
 extension EnvironmentValues {
-    /// 检查器顶部被工具栏盖住的高度；滚动内容自己加这段上边距（见 InspectorView）。
+    /// 详情顶部被导航栏 / 工具栏盖住的高度；滚动内容自己加这段上边距（见 InspectorView）。
     @Entry var inspectorTopInset: CGFloat = 0
 }
 
@@ -71,7 +73,7 @@ struct FieldRow: View {
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Text(label).foregroundStyle(Color(hex: 0x4A453C))
+            Text(label).foregroundStyle(Theme.label)
             if model.showFieldNames, let field {
                 FieldTag(field)
             }
@@ -86,7 +88,7 @@ struct FieldRow: View {
         .padding(.vertical, 7)
         .frame(minHeight: 32)
         .overlay(alignment: .top) {
-            Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1)
+            Rectangle().fill(Theme.hairline).frame(height: 1)
         }
     }
 }
@@ -294,7 +296,7 @@ struct TaskInspector: View {
                 let checked = progress.completedSubtaskIndices.contains(index)
                 HStack(spacing: 8) {
                     Image(systemName: checked ? "checkmark.circle.fill" : "circle")
-                        .foregroundStyle(checked ? Theme.done : Color(hex: 0xB9B09C))
+                        .foregroundStyle(checked ? Theme.done : Theme.muted)
                     Text(title)
                         .strikethrough(checked)
                         .foregroundStyle(checked ? Theme.subtext : Theme.text)
@@ -308,7 +310,7 @@ struct TaskInspector: View {
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
                 .overlay(alignment: .top) {
-                    Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1)
+                    Rectangle().fill(Theme.hairline).frame(height: 1)
                 }
             }
         }
@@ -379,7 +381,7 @@ struct TaskInspector: View {
                 .padding(.vertical, 6)
                 .background(selected ? Theme.accent.opacity(0.15) : Color.clear)
                 .overlay(alignment: .top) {
-                    Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1)
+                    Rectangle().fill(Theme.hairline).frame(height: 1)
                 }
                 .contentShape(Rectangle())
                 .onTapGesture { model.selectedOccurrenceID = occurrence.id2 }

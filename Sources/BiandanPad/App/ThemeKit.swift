@@ -54,7 +54,7 @@ struct ThemedSheet<Content: View, Footer: View>: View {
                     if let tag {
                         Text(tag.text)
                             .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Theme.onAccent)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 2)
                             .background(Capsule().fill(tag.color))
@@ -95,6 +95,9 @@ struct ThemedSheet<Content: View, Footer: View>: View {
         }
         .background(Theme.background)
         .tint(Theme.accent)
+        // iOS 26 起系统弹层自带玻璃底，但内容不满高时会露出一圈系统灰（深色下近黑），
+        // 和暖色主题割裂，所以这里直接铺主题底色。
+        .presentationBackground(Theme.background)
     }
 }
 
@@ -116,7 +119,7 @@ struct ThemedRow<Content: View>: View {
     var body: some View {
         HStack(spacing: 8) {
             Text(label)
-                .foregroundStyle(Color(hex: 0x4A453C))
+                .foregroundStyle(Theme.label)
                 .fixedSize()
             if let field, model.showFieldNames {
                 FieldTag(field)
@@ -129,7 +132,7 @@ struct ThemedRow<Content: View>: View {
         .padding(.vertical, 6)
         .frame(minHeight: 32)
         .overlay(alignment: .top) {
-            Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1)
+            Rectangle().fill(Theme.hairline).frame(height: 1)
         }
     }
 }
@@ -168,12 +171,14 @@ struct ThemedSegmented<Value: Hashable>: View {
                 } label: {
                     Text(option.title)
                         .font(.system(size: 12, weight: on ? .semibold : .regular))
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
                         .foregroundStyle(on ? Theme.text : Theme.subtext)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 4)
                         .background(
                             RoundedRectangle(cornerRadius: 6)
-                                .fill(on ? Color.white : Color.clear)
+                                .fill(on ? Theme.thumb : Color.clear)
                                 .shadow(color: .black.opacity(on ? 0.1 : 0), radius: 1, y: 1)
                         )
                         .contentShape(Rectangle())
@@ -182,8 +187,45 @@ struct ThemedSegmented<Value: Hashable>: View {
             }
         }
         .padding(2)
-        .floatingSurface(RoundedRectangle(cornerRadius: 8), fill: Color(hex: 0xE8E1D1), border: .clear,
+        .floatingSurface(RoundedRectangle(cornerRadius: 8), fill: Theme.trough, border: .clear,
                          shadowRadius: 0, glass: glass)
+    }
+}
+
+/// 内容区标题栏上的分段选择（列表 / 四象限 / 日历、四象限时间范围）。
+///
+/// iPadOS 26 起直接用系统 `Picker(.segmented)`：选中块就是系统的液态玻璃镜片，
+/// 按住会长出玻璃、可以在几段之间拖着换选中（UISegmentedControl 自带的手感），
+/// 不需要自己写拖拽手势，也不用模拟玻璃。旧系统仍用自绘的主题分段控件。
+struct HeaderSegmented<Value: Hashable>: View {
+    @Binding var selection: Value
+    let options: [ThemeOption<Value>]
+    /// 旧系统分支是否铺液态玻璃底（与替换前保持一致）。
+    var glass = false
+
+    var body: some View {
+        #if os(iOS)
+        if #available(iOS 26.0, *) {
+            Picker(selection: $selection) {
+                ForEach(options) { option in
+                    Text(option.title).tag(option.value)
+                }
+            } label: {
+                EmptyView()
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .fixedSize()
+        } else {
+            legacy
+        }
+        #else
+        legacy
+        #endif
+    }
+
+    private var legacy: some View {
+        ThemedSegmented(selection: $selection, options: options, glass: glass)
     }
 }
 
@@ -201,7 +243,7 @@ struct ThemedChoiceList<Value: Hashable>: View {
                 } label: {
                     HStack(spacing: 8) {
                         Image(systemName: on ? "checkmark.circle.fill" : "circle")
-                            .foregroundStyle(on ? Theme.accent : Color(hex: 0xB9B09C))
+                            .foregroundStyle(on ? Theme.accent : Theme.muted)
                         Text(option.title)
                             .font(.system(size: 12.5, weight: on ? .semibold : .regular))
                             .foregroundStyle(Theme.text)
@@ -213,7 +255,7 @@ struct ThemedChoiceList<Value: Hashable>: View {
                 }
                 .buttonStyle(.plain)
                 .overlay(alignment: .top) {
-                    Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1)
+                    Rectangle().fill(Theme.hairline).frame(height: 1)
                 }
             }
         }
@@ -283,7 +325,7 @@ extension View {
             .font(.system(size: 13))
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
-            .background(RoundedRectangle(cornerRadius: 8).fill(Theme.card))
+            .background(RoundedRectangle(cornerRadius: 8).fill(Theme.thumb))
             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Theme.line))
     }
 }
@@ -310,7 +352,7 @@ private struct ThemedButtonBody: View {
     var body: some View {
         configuration.label
             .font(.system(size: 13, weight: kind == .secondary ? .regular : .semibold))
-            .foregroundStyle(kind == .secondary ? Theme.text : Color.white)
+            .foregroundStyle(kind == .secondary ? Theme.text : Theme.onAccent)
             .padding(.horizontal, 16)
             .padding(.vertical, 6)
             .background(RoundedRectangle(cornerRadius: 8).fill(fill))
@@ -332,6 +374,19 @@ extension ButtonStyle where Self == ThemedButtonStyle {
     static var themedPrimary: ThemedButtonStyle { ThemedButtonStyle(kind: .primary) }
     static var themed: ThemedButtonStyle { ThemedButtonStyle(kind: .secondary) }
     static var themedDestructive: ThemedButtonStyle { ThemedButtonStyle(kind: .destructive) }
+}
+
+// MARK: - 系统表格
+
+extension View {
+    /// 系统 Table 在 iPadOS 上用的是系统灰 / 纯黑底，和暖色主题不搭；
+    /// 收起系统背景，改成和卡片一致的一层。浅色、深色都适用。
+    func themedTable() -> some View {
+        self.scrollContentBackground(.hidden)
+            .background(Theme.card)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Theme.line))
+    }
 }
 
 // MARK: - 卡片与弹出面板菜单行
@@ -387,10 +442,10 @@ struct ThemedMenuRow: View {
                 if let shortcut {
                     Text(shortcut)
                         .font(.system(size: 11, design: .monospaced))
-                        .foregroundStyle(Color(hex: 0x6B6457))
+                        .foregroundStyle(Theme.chipText)
                         .padding(.horizontal, 5)
                         .padding(.vertical, 1)
-                        .background(RoundedRectangle(cornerRadius: 4).fill(Color(hex: 0xEEE8DA)))
+                        .background(RoundedRectangle(cornerRadius: 4).fill(Theme.chipFill))
                 }
             }
             .padding(.horizontal, 10)

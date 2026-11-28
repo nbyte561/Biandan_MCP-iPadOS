@@ -19,7 +19,7 @@ private struct EditRow<Content: View>: View {
     private var labelView: some View {
         HStack(spacing: 8) {
             Text(label)
-                .foregroundStyle(Color(hex: 0x4A453C))
+                .foregroundStyle(Theme.label)
                 .fixedSize()
             if model.showFieldNames, let field {
                 // 空间不够时字段名先缩成省略号，不撑宽检查器。
@@ -50,7 +50,7 @@ private struct EditRow<Content: View>: View {
         .padding(.vertical, 6)
         .frame(minHeight: 32)
         .overlay(alignment: .top) {
-            Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1)
+            Rectangle().fill(Theme.hairline).frame(height: 1)
         }
     }
 }
@@ -81,7 +81,7 @@ private struct SaveBar: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
         .overlay(alignment: .top) {
-            Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1)
+            Rectangle().fill(Theme.hairline).frame(height: 1)
         }
     }
 }
@@ -377,12 +377,12 @@ struct TaskEditPanel: View {
         return InspectorSection("编辑 · 标题与备注") {
             VStack(alignment: .leading, spacing: 6) {
                 TextField("标题", text: $title)
-                    .textFieldStyle(.roundedBorder)
+                    .themedField()
                     .focused($titleFocused)
                     .onSubmit { saveText() }
                     .task(id: model.titleFocusRequest) { await focusTitleIfRequested() }
                 TextField("备注", text: $remark, axis: .vertical)
-                    .textFieldStyle(.roundedBorder)
+                    .themedField()
                     .lineLimit(2...6)
                 if !content.attachments.isEmpty {
                     Text(verbatim: "附件 \(content.attachments.count) 个，修改备注时会保留")
@@ -543,7 +543,7 @@ struct TaskEditPanel: View {
         return InspectorSection("编辑 · 地点") {
             EditRow("地点", field: "location") {
                 TextField("名称或地址", text: $locationName)
-                    .textFieldStyle(.roundedBorder)
+                    .themedField()
                     .frame(maxWidth: 200)
             }
             EditRow("地图", field: "MapKit") {
@@ -552,12 +552,12 @@ struct TaskEditPanel: View {
             }
             EditRow("纬度", field: "latitude") {
                 TextField("GCJ-02", text: $latitudeText)
-                    .textFieldStyle(.roundedBorder)
+                    .themedField()
                     .frame(maxWidth: 140)
             }
             EditRow("经度", field: "longitude") {
                 TextField("GCJ-02", text: $longitudeText)
-                    .textFieldStyle(.roundedBorder)
+                    .themedField()
                     .frame(maxWidth: 140)
             }
             EditRow("地点提醒", field: "isRemind bit1") {
@@ -621,7 +621,7 @@ struct TaskEditPanel: View {
                             get: { index < subtasks.count ? subtasks[index] : "" },
                             set: { if index < subtasks.count { subtasks[index] = $0 } }
                         ))
-                        .textFieldStyle(.roundedBorder)
+                        .themedField()
                         Button {
                             if index < subtasks.count { subtasks.remove(at: index) }
                         } label: {

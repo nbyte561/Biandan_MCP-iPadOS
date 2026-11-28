@@ -13,7 +13,7 @@ struct AccountCard: View {
         case .failed: return ("同步失败，点开查看", Theme.overdue)
         case .idle:
             if model.isSavingInBackground { return ("正在保存更改…", Theme.accent) }
-            if model.outboxPending > 0 { return ("\(model.outboxPending) 项修改待同步", Color(hex: 0xE8890C)) }
+            if model.outboxPending > 0 { return ("\(model.outboxPending) 项修改待同步", Theme.warning) }
             return RenewalText.cardStatus(days: model.renewal?.daysUntilRelogin(now: Date()))
         }
     }
@@ -43,9 +43,9 @@ struct AccountCard: View {
                 Spacer(minLength: 0)
                 Image(systemName: "chevron.up.chevron.down")
                     .font(.system(size: 9.5, weight: .bold))
-                    .foregroundStyle(open ? Color(hex: 0x9A7400) : Theme.subtext)
+                    .foregroundStyle(open ? OccurrenceStatus.pending.tint : Theme.subtext)
                     .frame(width: 22, height: 22)
-                    .background(Circle().fill(open || hovering ? Theme.accent.opacity(0.2) : Color(hex: 0xEEE8DA)))
+                    .background(Circle().fill(open || hovering ? Theme.accent.opacity(0.2) : Theme.chipFill))
             }
             .padding(10)
             .background(RoundedRectangle(cornerRadius: 10).fill(Theme.card))
@@ -167,11 +167,11 @@ struct AccountPanel: View {
     }
 
     private var statDivider: some View {
-        Rectangle().fill(Color(hex: 0xF0EADD)).frame(width: 1, height: 26)
+        Rectangle().fill(Theme.hairline).frame(width: 1, height: 26)
     }
 
     private var rowSeparator: some View {
-        Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1).padding(.leading, 46)
+        Rectangle().fill(Theme.hairline).frame(height: 1).padding(.leading, 46)
     }
 }
 

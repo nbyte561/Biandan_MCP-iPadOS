@@ -156,7 +156,7 @@ struct FocusDeleteSheet: View {
             InspectorSection("记录") {
                 Text(verbatim: FocusText.summary(record))
                     .font(.system(size: 12.5))
-                    .foregroundStyle(Color(hex: 0x4A453C))
+                    .foregroundStyle(Theme.label)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(10)
             }

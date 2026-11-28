@@ -23,7 +23,7 @@ struct StatsView: View {
         let subject = StatsSubject(rawValue: subjectRaw) ?? .tasks
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                ThemedSegmented(selection: Binding(get: { subject }, set: { subjectRaw = $0.rawValue }),
+                HeaderSegmented(selection: Binding(get: { subject }, set: { subjectRaw = $0.rawValue }),
                                 options: StatsSubject.padCases.map { ThemeOption(value: $0, title: $0.title) })
                 Spacer(minLength: 0)
             }
@@ -57,7 +57,7 @@ struct StatsView: View {
         return ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(spacing: 12) {
-                    ThemedSegmented(selection: $range,
+                    HeaderSegmented(selection: $range,
                                     options: StatsRange.allCases.map { ThemeOption(value: $0, title: $0.title) })
                     Text(verbatim: "\(summary.start.shortTitle) – \(summary.end.shortTitle)")
                         .font(.system(size: 12))

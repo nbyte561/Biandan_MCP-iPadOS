@@ -40,13 +40,14 @@ struct PadSettingsView: View {
             case .sync: return Quadrant.notImportantUrgent.tint
             case .reminder: return Quadrant.importantNotUrgent.tint
             case .data: return Quadrant.neither.tint
-            case .mcp: return Color(hex: 0x8E5BD6)
+            case .mcp: return Theme.purple
             case .about: return Theme.subtext
             }
         }
     }
 
     @State private var pane: Pane = .account
+    @AppStorage(PadAppearance.defaultsKey) private var appearance = PadAppearance.system.rawValue
 
     var body: some View {
         NavigationStack {
@@ -77,8 +78,9 @@ struct PadSettingsView: View {
             }
             .navigationTitle("设置")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Theme.panel, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
         }
-        .preferredColorScheme(.light)
     }
 
     // MARK: - 外壳
@@ -93,7 +95,7 @@ struct PadSettingsView: View {
                     HStack(spacing: 9) {
                         Image(systemName: item.icon)
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Theme.onAccent)
                             .frame(width: 22, height: 22)
                             .background(RoundedRectangle(cornerRadius: 6).fill(item.tint))
                         Text(item.title)
@@ -122,7 +124,7 @@ struct PadSettingsView: View {
         HStack(spacing: 10) {
             Image(systemName: pane.icon)
                 .font(.system(size: 15, weight: .bold))
-                .foregroundStyle(.white)
+                .foregroundStyle(Theme.onAccent)
                 .frame(width: 30, height: 30)
                 .background(RoundedRectangle(cornerRadius: 8).fill(pane.tint))
             Text(pane.title)
@@ -343,6 +345,13 @@ struct PadSettingsView: View {
                         .font(.system(size: 12))
                         .foregroundStyle(Theme.subtext)
                 }
+            }
+            InspectorSection("外观") {
+                ThemedRow("主题") {
+                    ThemedSegmented(selection: $appearance,
+                                    options: PadAppearance.allCases.map { ThemeOption(value: $0.rawValue, title: $0.title) })
+                }
+                note("默认跟随 iPad 的「显示与亮度」。深色下沿用同一套暖色调，不会换成系统灰。")
             }
             InspectorSection("说明") {
                 note("这个版本是把 macOS 客户端（BiandanMac）移植到 iPadOS 的实验版本："

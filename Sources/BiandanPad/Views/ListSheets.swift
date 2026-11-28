@@ -126,7 +126,7 @@ struct ListDeleteSheet: View {
                     Spacer(minLength: 0)
                 }
                 .font(.system(size: 12.5))
-                .foregroundStyle(Color(hex: 0x4A453C))
+                .foregroundStyle(Theme.label)
                 .padding(10)
             }
             if count > 0 {

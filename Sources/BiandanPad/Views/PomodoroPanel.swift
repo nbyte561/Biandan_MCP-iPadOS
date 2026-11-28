@@ -103,7 +103,7 @@ private struct PomodoroPresetButton: View {
 
     var body: some View {
         let fill: Color = selected ? Theme.accent : Theme.card
-        let text: Color = selected ? Color.white : Theme.text
+        let text: Color = selected ? Theme.onAccent : Theme.text
         Button(action: action) {
             Text(verbatim: "\(minutes) 分")
                 .font(.system(size: 12, weight: .semibold))

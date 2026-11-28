@@ -111,7 +111,7 @@ private struct CalendarMiniDay: View {
             Text(verbatim: "\(day.day)")
                 .font(.system(size: 10.5, weight: isToday ? .heavy : .medium))
                 .monospacedDigit()
-                .foregroundStyle(isToday ? Color.white : Theme.text)
+                .foregroundStyle(isToday ? Theme.onAccent : Theme.text)
                 .frame(width: 18, height: 16)
                 .background(Circle().fill(isToday ? Theme.accent : Color.clear))
             Circle()

@@ -30,8 +30,37 @@ extension AppModel {
             selectionAnchor = item.id
             selectedOccurrenceID = item.id
             selectedFocusID = nil
+            revealInspector()
         }
         HardwareKeys.resignTextFocus()
+    }
+
+    /// iPad 上详情是弹窗：用户在界面上点了一条记录，就该把弹窗拉起来。
+    /// macOS 上详情是常驻右栏（用户自己关掉了不该被强行打开），所以这里是空操作。
+    func revealInspector() {
+        #if os(iOS)
+        showInspector = true
+        #endif
+    }
+
+    /// 工具栏的「详情」按钮：收起或打开详情弹窗。
+    /// 打开时若还没选中任何东西，先选中当前页面的第一条，免得弹出一个空面板。
+    func toggleInspector() {
+        guard !showInspector else {
+            showInspector = false
+            return
+        }
+        if selectedItem == nil, selectedFocus == nil {
+            if let first = keyboardOrder.first {
+                selectedOccurrenceID = first.id
+                selectedFocusID = nil
+            } else if (sidebarSelection ?? .all) == .focus,
+                      let latest = snapshot.focus.max(by: { ($0.startedAt ?? .distantPast) < ($1.startedAt ?? .distantPast) }) {
+                selectedFocusID = latest.time
+                selectedOccurrenceID = nil
+            }
+        }
+        showInspector = true
     }
 
     func toggleMultiSelect(_ item: OccurrenceItem) {

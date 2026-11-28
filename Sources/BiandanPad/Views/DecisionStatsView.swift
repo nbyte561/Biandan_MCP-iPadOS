@@ -467,7 +467,7 @@ private struct DecisionMetricChip: View {
     var body: some View {
         let fill: Color = on ? Theme.accent : Theme.panel
         let stroke: Color = on ? Theme.accent : Theme.line
-        let textColor: Color = on ? Color.white : Theme.text
+        let textColor: Color = on ? Theme.onAccent : Theme.text
         let weight: Font.Weight = on ? .bold : .medium
         Button(action: action) {
             Text(verbatim: metric.title)

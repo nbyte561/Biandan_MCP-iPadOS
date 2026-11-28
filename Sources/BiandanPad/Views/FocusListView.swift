@@ -49,15 +49,15 @@ struct FocusListView: View {
 
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 12) {
-                ThemedSegmented(selection: $range,
+                HeaderSegmented(selection: $range,
                                 options: FocusRange.allCases.map { ThemeOption(value: $0, title: $0.title) })
                     .help("专注记录的时间范围")
-                ThemedSegmented(selection: $byDay,
+                HeaderSegmented(selection: $byDay,
                                 options: [ThemeOption(value: false, title: "明细"), ThemeOption(value: true, title: "按日")])
                     .help("逐条明细或按日汇总")
                 Text(verbatim: "\(records.count) 条 · 合计 \(Int(minutes)) 分钟 · 🍅 \(good) / \(bad)")
                     .font(.system(size: 12.5, weight: .semibold))
-                    .foregroundStyle(Color(hex: 0x4A453C))
+                    .foregroundStyle(Theme.label)
                 Spacer()
                 Button(model.pomodoro == nil ? "番茄钟" : "查看番茄钟") { model.showPomodoro = true }
                     .buttonStyle(.themed)
@@ -125,6 +125,7 @@ private struct FocusDetailTable: View {
         .onChange(of: model.selectedFocusID) { _, newValue in
             if newValue != nil { model.selectedOccurrenceID = nil }
         }
+        .themedTable()
     }
 }
 
@@ -141,6 +142,7 @@ private struct FocusDayTable: View {
                 .width(min: 50, ideal: 64)
             TableColumn("好 / 坏") { (row: FocusDayRow) in Text(verbatim: "\(row.good) / \(row.bad)") }
         }
+        .themedTable()
     }
 }
 

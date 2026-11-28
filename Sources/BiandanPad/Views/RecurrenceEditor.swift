@@ -112,11 +112,11 @@ private struct RuleChip: View {
                 Text(verbatim: title)
                     .font(.system(size: 12, weight: on ? .bold : .medium))
                     .monospacedDigit()
-                    .foregroundStyle(on ? Color.white : Theme.text)
+                    .foregroundStyle(on ? Theme.onAccent : Theme.text)
                 if let subtitle {
                     Text(verbatim: subtitle)
                         .font(.system(size: 9.5))
-                        .foregroundStyle(on ? Color.white.opacity(0.85) : Theme.subtext)
+                        .foregroundStyle(on ? Theme.onAccent.opacity(0.85) : Theme.subtext)
                         .lineLimit(1)
                 }
             }
@@ -206,7 +206,7 @@ struct RepeatRuleEditor: View {
             .padding(10)
             .frame(maxWidth: .infinity, alignment: .leading)
             .overlay(alignment: .top) {
-                Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1)
+                Rectangle().fill(Theme.hairline).frame(height: 1)
             }
             ThemedRow("日期筛选", field: "loopUnit ÷ 100") {
                 ThemedSegmented(selection: $draft.filter,
@@ -263,7 +263,7 @@ struct RepeatRuleEditor: View {
         HStack(spacing: 6) {
             Text(text)
                 .font(.system(size: 12.5))
-                .foregroundStyle(Color(hex: 0x4A453C))
+                .foregroundStyle(Theme.label)
             if model.showFieldNames { FieldTag(field) }
         }
     }
@@ -291,14 +291,14 @@ struct RepeatRuleEditor: View {
                         HStack(spacing: 4) {
                             Text(verbatim: yearTitle(code))
                                 .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(Theme.onAccent)
                                 .lineLimit(1)
                             Button {
                                 yearList.wrappedValue.removeAll { $0 == code }
                             } label: {
                                 Image(systemName: "xmark")
                                     .font(.system(size: 8.5, weight: .bold))
-                                    .foregroundStyle(.white.opacity(0.85))
+                                    .foregroundStyle(Theme.onAccent.opacity(0.85))
                             }
                             .buttonStyle(.plain)
                         }
@@ -521,7 +521,7 @@ struct RecurrenceSheet: View {
             } else if let plan {
                 HStack(spacing: 0) {
                     impactCell("新增", plan.created, Theme.done)
-                    impactCell("改期", plan.rescheduled, Color(hex: 0xD9A800))
+                    impactCell("改期", plan.rescheduled, Theme.gold)
                     impactCell("移除", plan.removed, Theme.overdue)
                     impactCell("保留", plan.protectedDates, Theme.subtext)
                 }

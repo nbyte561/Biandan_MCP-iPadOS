@@ -186,6 +186,6 @@ struct ImportLogRow: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .overlay(alignment: .top) { Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1) }
+        .overlay(alignment: .top) { Rectangle().fill(Theme.hairline).frame(height: 1) }
     }
 }

@@ -26,7 +26,7 @@ struct TodaySummaryCard: View {
                 }
                 Spacer(minLength: 8)
                 if item != .undated {
-                    ThemedSegmented(selection: Binding(get: { model.summaryRange },
+                    HeaderSegmented(selection: Binding(get: { model.summaryRange },
                                                        set: { model.summaryRange = $0 }),
                                     options: ProgressRange.allCases.map { ThemeOption(value: $0, title: $0.title) })
                         .help("完成率与时间条的统计时间范围")
@@ -53,6 +53,7 @@ struct TodaySummaryCard: View {
                                          onSelect: { occurrence in
                                              model.selectedOccurrenceID = occurrence.id
                                              model.selectedFocusID = nil
+                                             model.revealInspector()
                                          },
                                          onShowConflicts: { model.sidebarSelection = .conflicts })
                 }

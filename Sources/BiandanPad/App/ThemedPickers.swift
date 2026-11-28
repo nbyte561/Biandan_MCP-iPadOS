@@ -207,7 +207,7 @@ struct ThemedCalendarPanel: View {
                         let weekday = floorMod(index + weekStart, 7)
                         Text(LocalDate.weekdayShortNames[weekday])
                             .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(weekday == 0 || weekday == 6 ? Color(hex: 0xD9534A) : Theme.subtext)
+                            .foregroundStyle(weekday == 0 || weekday == 6 ? Theme.weekend : Theme.subtext)
                             .frame(maxWidth: .infinity)
                             .frame(height: 20)
                     }
@@ -270,7 +270,7 @@ struct ThemedCalendarPanel: View {
         } label: {
             Text(shortcut.title)
                 .font(.system(size: 11.5, weight: on ? .bold : .medium))
-                .foregroundStyle(on ? Color.white : Theme.text)
+                .foregroundStyle(on ? Theme.onAccent : Theme.text)
                 .frame(maxWidth: .infinity)
                 .frame(height: 24)
                 .background(RoundedRectangle(cornerRadius: 7).fill(on ? tint : Theme.card))
@@ -297,10 +297,10 @@ private struct DayCell: View {
     private var weekend: Bool { day.pythonWeekday >= 5 }
 
     private var numberColor: Color {
-        if selected { return .white }
+        if selected { return Theme.onAccent }
         if disabled { return Theme.fieldName.opacity(0.6) }
         if !inMonth { return Theme.fieldName }
-        if weekend { return Color(hex: 0xD9534A) }
+        if weekend { return Theme.weekend }
         return Theme.text
     }
 
@@ -330,7 +330,7 @@ private struct DayCell: View {
                     .foregroundStyle(numberColor)
                 Text(lunar)
                     .font(.system(size: 8.5))
-                    .foregroundStyle(selected ? Color.white.opacity(0.85) : Theme.fieldName)
+                    .foregroundStyle(selected ? Theme.onAccent.opacity(0.85) : Theme.fieldName)
                     .lineLimit(1)
             }
             .frame(width: 38, height: 36)
@@ -351,9 +351,9 @@ private struct DayCell: View {
         if let badge {
             Text(badge)
                 .font(.system(size: 7.5, weight: .bold))
-                .foregroundStyle(.white)
+                .foregroundStyle(Theme.onAccent)
                 .frame(width: 12, height: 12)
-                .background(Circle().fill(badge == "休" ? Color(hex: 0xE5483A) : Theme.subtext))
+                .background(Circle().fill(badge == "休" ? Quadrant.importantUrgent.tint : Theme.subtext))
                 .offset(x: 3, y: -3)
         }
     }
@@ -504,7 +504,7 @@ struct ThemedTimePanel: View {
             Text(verbatim: text)
                 .font(.system(size: 12, weight: selected ? .bold : .medium))
                 .monospacedDigit()
-                .foregroundStyle(selected ? Color.white : Theme.text)
+                .foregroundStyle(selected ? Theme.onAccent : Theme.text)
                 .frame(maxWidth: .infinity)
                 .frame(height: 26)
                 .background(RoundedRectangle(cornerRadius: 7).fill(selected ? tint : Theme.card))

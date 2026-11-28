@@ -69,7 +69,7 @@ struct RenewalStatus: Equatable, Sendable {
 enum RenewalText {
     /// 剩余天数不超过这个值时提醒。
     static let warnDays = 14
-    static let warning = Color(hex: 0xE8890C)
+    static let warning = Theme.warning
 
     private static func clock(_ date: Date) -> String {
         let formatter = DateFormatter()
@@ -150,10 +150,10 @@ enum RenewalText {
 
     /// 侧栏账户卡片的状态文字和圆点颜色。
     static func cardStatus(days: Int?) -> (text: String, color: Color) {
-        guard let days else { return ("华为账号 · 自动续期", Color(hex: 0x34C759)) }
+        guard let days else { return ("华为账号 · 自动续期", Theme.greenDot) }
         if days <= 0 { return ("需要重新登录", Theme.overdue) }
         if days <= warnDays { return ("剩 \(days) 天需重新登录", warning) }
-        return ("自动续期 · 剩 \(days) 天", Color(hex: 0x34C759))
+        return ("自动续期 · 剩 \(days) 天", Theme.greenDot)
     }
 }
 
@@ -169,7 +169,7 @@ struct RenewalSummary: View {
         VStack(spacing: 0) {
             row(icon: "arrow.triangle.2.circlepath", tint: Quadrant.notImportantUrgent.tint,
                 title: "下次续期", value: RenewalText.nextRenewal(renewal, now: now), valueColor: Theme.text)
-            Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1).padding(.leading, 40)
+            Rectangle().fill(Theme.hairline).frame(height: 1).padding(.leading, 40)
             row(icon: "hourglass", tint: warn ?? Quadrant.neither.tint,
                 title: "重新登录", value: RenewalText.reloginLine(renewal, now: now), valueColor: warn ?? Theme.text)
         }

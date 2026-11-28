@@ -120,7 +120,7 @@ struct CalDAVConnectSheet: View {
                     HStack(spacing: 10) {
                         Image(systemName: on ? "checkmark.square.fill" : "square")
                             .font(.system(size: 16))
-                            .foregroundStyle(on ? Theme.accent : Color(hex: 0xB9B09C))
+                            .foregroundStyle(on ? Theme.accent : Theme.muted)
                         Circle().fill(Self.color(calendar.color)).frame(width: 9, height: 9)
                         VStack(alignment: .leading, spacing: 1) {
                             Text(verbatim: calendar.name)

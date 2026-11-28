@@ -9,12 +9,13 @@ import UniformTypeIdentifiers
 @main
 struct BiandanPadApp: App {
     @State private var model = AppModel()
+    @AppStorage(PadAppearance.defaultsKey) private var appearance = PadAppearance.system.rawValue
 
     var body: some Scene {
         WindowGroup {
             PadRootView()
                 .environment(model)
-                .preferredColorScheme(.light)
+                .preferredColorScheme(PadAppearance(rawValue: appearance)?.scheme)
                 // 设计规范里没有系统蓝：所有系统控件（开关、工具栏按钮、分段高亮）统一用主题黄。
                 .tint(Theme.accent)
                 .task {
@@ -51,10 +52,13 @@ struct PadRootView: View {
         .sheet(item: $authItem) { item in
             PadAuthWebView(url: item.url) { authItem = nil }
                 .environment(model)
+                // 下滑误关会让登录卡在「等待授权」，只能靠「取消」结束。
+                .interactiveDismissDisabled()
         }
         .sheet(isPresented: $settingsShown) {
             PadSettingsView()
                 .environment(model)
+                .presentationBackground(Theme.background)
         }
         .sheet(item: $shareURL) { item in
             PadShareSheet(url: item.url)
@@ -106,6 +110,15 @@ extension PadRootView {
         case "habits": model.sidebarSelection = .habits
         case "focus": model.sidebarSelection = .focus
         case "conflicts": model.sidebarSelection = .conflicts
+        case "import": model.sidebarSelection = .importer
+        case "inspector":
+            // 等 bootstrap 把数据灌进来再选中第一条，用来截详情弹窗。
+            model.setMode(.list); model.sidebarSelection = .all
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                model.selectedOccurrenceID = model.snapshot.occurrences.first?.id
+                model.showInspector = true
+            }
         default: break
         }
     }
@@ -115,8 +128,12 @@ extension PadRootView {
     /// 截图/排查用：BIANDAN_PAD_SHEET=settings 启动时直接弹出设置面板。
     @MainActor
     private func applyDebugSheetIfRequested() {
-        guard ProcessInfo.processInfo.environment["BIANDAN_PAD_SHEET"] == "settings" else { return }
-        settingsShown = true
+        guard let raw = ProcessInfo.processInfo.environment["BIANDAN_PAD_SHEET"], !raw.isEmpty else { return }
+        switch raw {
+        case "settings": settingsShown = true
+        case "newtask": model.newTaskPreset = model.makeNewTaskPreset()
+        default: break
+        }
     }
 }
 
@@ -141,3 +158,5 @@ struct PadShareSheet: UIViewControllerRepresentable {
 
     func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
 }
+
+

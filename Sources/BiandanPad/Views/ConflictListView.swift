@@ -120,7 +120,7 @@ struct ConflictNoticeCard: View {
             } label: {
                 Text("查看冲突")
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Theme.onAccent)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
                     .background(Capsule().fill(Theme.overdue))

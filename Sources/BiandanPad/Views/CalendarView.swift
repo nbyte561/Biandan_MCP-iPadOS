@@ -30,7 +30,7 @@ struct CalendarView: View {
             HStack(spacing: 8) {
                 Text(verbatim: title(days: days))
                     .font(.system(size: 17, weight: .bold))
-                ThemedSegmented(selection: $model.calendarScope,
+                HeaderSegmented(selection: $model.calendarScope,
                                 options: CalendarScope.allCases.map { ThemeOption(value: $0, title: $0.title) },
                                 glass: true)
                     .help("日历显示范围")
@@ -179,7 +179,7 @@ struct CalendarDayCell: View {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text(verbatim: "\(day.day)")
                     .font(.system(size: 13, weight: isToday ? .heavy : .semibold))
-                    .foregroundStyle(isToday ? Color.white : (inMonth ? Theme.text : Theme.fieldName))
+                    .foregroundStyle(isToday ? Theme.onAccent : (inMonth ? Theme.text : Theme.fieldName))
                     .padding(.horizontal, isToday ? 6 : 0)
                     .background(Capsule().fill(isToday ? Theme.accent : Color.clear))
                     .contentShape(Rectangle())
@@ -247,11 +247,11 @@ struct CalendarWeekColumn: View {
             HStack(alignment: .firstTextBaseline, spacing: 5) {
                 Text(LocalDate.weekdayShortNames[day.weekday])
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(weekend ? Color(hex: 0xD9534A) : Theme.subtext)
+                    .foregroundStyle(weekend ? Theme.weekend : Theme.subtext)
                 Text(verbatim: "\(day.day)")
                     .font(.system(size: 16, weight: .heavy))
                     .monospacedDigit()
-                    .foregroundStyle(isToday ? Color.white : Theme.text)
+                    .foregroundStyle(isToday ? Theme.onAccent : Theme.text)
                     .padding(.horizontal, isToday ? 7 : 0)
                     .background(Capsule().fill(isToday ? Theme.accent : Color.clear))
                     .contentShape(Rectangle())

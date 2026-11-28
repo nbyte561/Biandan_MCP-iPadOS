@@ -116,7 +116,7 @@ private struct HabitCard: View {
         } label: {
             Image(systemName: done ? "checkmark.circle.fill" : "circle")
                 .font(.system(size: 26, weight: .medium))
-                .foregroundStyle(done ? Theme.done : (disabled ? Theme.fieldName : Theme.accent))
+                .foregroundStyle(done ? Theme.done : (disabled ? Theme.muted : Theme.accent))
         }
         .buttonStyle(.plain)
         .disabled(disabled)
@@ -135,7 +135,7 @@ private struct HabitCard: View {
         VStack(alignment: .leading, spacing: 4) {
             Text("打卡记录")
                 .font(.system(size: 12, weight: .bold))
-                .foregroundStyle(Color(hex: 0x4A453C))
+                .foregroundStyle(Theme.label)
             if habit.records.isEmpty {
                 Text("还没有打卡记录").font(.system(size: 11.5)).foregroundStyle(Theme.subtext)
             }
@@ -152,6 +152,7 @@ private struct HabitCard: View {
                 .onTapGesture {
                     model.selectedOccurrenceID = record.id
                     model.selectedFocusID = nil
+                    model.revealInspector()
                 }
             }
             if habit.records.count > 30 {
@@ -184,7 +185,7 @@ private struct HabitDayStrip: View {
                         .frame(width: 16, height: 16)
                     Text(verbatim: "\(day.day)")
                         .font(.system(size: 9, weight: day == today ? .heavy : .regular))
-                        .foregroundStyle(day == today ? Theme.accent : Theme.fieldName)
+                        .foregroundStyle(day == today ? Theme.accent : Theme.subtext)
                 }
                 .help(day.shortTitle + (checked ? " · 已打卡" : " · 未打卡"))
             }

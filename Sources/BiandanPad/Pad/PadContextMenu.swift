@@ -105,7 +105,7 @@ struct ThemedMenuGroup<Content: View>: View {
 
 struct ThemedMenuSeparator: View {
     var body: some View {
-        Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1).padding(.leading, 46)
+        Rectangle().fill(Theme.hairline).frame(height: 1).padding(.leading, 46)
     }
 }
 

@@ -246,6 +246,9 @@ final class AppModel {
         didSet { UserDefaults.standard.set(quadrantRange.rawValue, forKey: DefaultsKey.quadrantRange) }
     }
     var searchText = ""
+    /// 快速添加栏的草稿。放在 model 而不是栏内 @State：换页转场会重建整块内容，
+    /// 状态留在视图里会被一起丢掉（见 PageSwap）。
+    var quickAddDraft = ""
     var selectedOccurrenceID: String?
     var selectedFocusID: String?
     /// ⌘ 点击多选的执行实例 ID；非空时显示批量操作栏。
@@ -629,7 +632,11 @@ final class AppModel {
     }
 
     func reopenAuthorizationPage() {
-        if let url = pendingAuthorizationURL { Platform.open(url) }
+        guard let url = pendingAuthorizationURL else { return }
+        // 必须回到 App 内的浏览器面板：登录回调监听跑在本机 127.0.0.1:42681，
+        // 跳 Safari 会让 App 退到后台（iPadOS 18 上是侧拉，iPadOS 27 上是全屏），
+        // 监听收不到回调，登录就卡在「等待授权」。
+        DispatchQueue.main.async { PadAuthBrowser.present(url) }
     }
 
     func signOut(keepCache: Bool) async {

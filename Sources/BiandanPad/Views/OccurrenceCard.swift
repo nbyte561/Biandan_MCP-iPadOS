@@ -194,9 +194,9 @@ struct StatusCircle: View {
     var tint: Color? = nil
     var size: CGFloat = 16
 
-    private var ring: Color { tint ?? Color(hex: 0xB9B09C) }
+    private var ring: Color { tint ?? Theme.muted }
     private var filled: Color { tint ?? Theme.done }
-    private var abandonedRing: Color { tint.map { $0.opacity(0.55) } ?? Color(hex: 0xB9B09C) }
+    private var abandonedRing: Color { tint.map { $0.opacity(0.55) } ?? Theme.muted }
 
     var body: some View {
         switch status {
@@ -209,7 +209,7 @@ struct StatusCircle: View {
                 Circle().fill(filled)
                 Image(systemName: "checkmark")
                     .font(.system(size: size * 0.55, weight: .bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Theme.onAccent)
             }
             .frame(width: size, height: size)
         case .abandoned:
@@ -230,7 +230,7 @@ struct ThinProgress: View {
 
     var body: some View {
         ZStack(alignment: .leading) {
-            Capsule().fill(Color(hex: 0xE7E0D0))
+            Capsule().fill(Theme.track)
             Capsule().fill(Theme.accent).frame(width: width * max(0, min(fraction, 1)))
         }
         .frame(width: width, height: 4)

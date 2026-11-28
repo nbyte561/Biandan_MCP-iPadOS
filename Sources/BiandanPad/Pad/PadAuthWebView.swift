@@ -79,8 +79,15 @@ private struct WebViewRepresentable: UIViewRepresentable {
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true
-        webView.isOpaque = false
-        webView.backgroundColor = UIColor(Theme.background)
+        // 华为账号授权页的深色样式不完整：标题、正文用深灰，压在深色底上几乎看不见
+        // （实测深色下「华为账号登录」整块糊掉，二维码卡片反而还是白的）。
+        // 这类第三方登录页一律强制浅色，网页的 prefers-color-scheme 也跟着变成 light；
+        // 外层面板的标题栏仍走主题色，所以深色模式下界面不会割裂。
+        webView.overrideUserInterfaceStyle = .light
+        webView.isOpaque = true
+        webView.backgroundColor = .white
+        webView.scrollView.backgroundColor = .white
+        webView.underPageBackgroundColor = .white
         webView.load(URLRequest(url: url))
         return webView
     }

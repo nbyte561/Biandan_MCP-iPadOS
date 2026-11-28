@@ -78,12 +78,12 @@ struct LoginView: View {
             ForEach(Array(steps.enumerated()), id: \.offset) { index, text in
                 HStack(spacing: 10) {
                     ZStack {
-                        Circle().fill(index <= 1 ? Theme.accent : Color(hex: 0xEEE8DA))
+                        Circle().fill(index <= 1 ? Theme.accent : Theme.chipFill)
                         if index == 0 {
-                            Image(systemName: "checkmark").font(.system(size: 9, weight: .bold)).foregroundStyle(.white)
+                            Image(systemName: "checkmark").font(.system(size: 9, weight: .bold)).foregroundStyle(Theme.onAccent)
                         } else {
                             Text("\(index + 1)").font(.system(size: 11, weight: .semibold))
-                                .foregroundStyle(index == 1 ? .white : Theme.subtext)
+                                .foregroundStyle(index == 1 ? Theme.onAccent : Theme.subtext)
                         }
                     }
                     .frame(width: 20, height: 20)

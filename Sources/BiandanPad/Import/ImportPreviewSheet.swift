@@ -43,7 +43,7 @@ struct ImportPreviewSheet: View {
         HStack(spacing: 10) {
             Image(systemName: "square.and.arrow.down.on.square")
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(Color(hex: 0xFA8B36))
+                .foregroundStyle(Theme.orange)
             VStack(alignment: .leading, spacing: 1) {
                 Text("导入日程").font(.system(size: 16, weight: .heavy)).foregroundStyle(Theme.text)
                 Text(verbatim: preview.address).font(.system(size: 11)).foregroundStyle(Theme.subtext).lineLimit(1)
@@ -177,7 +177,7 @@ private struct ImportEventRow: View {
             Button { event.include.toggle() } label: {
                 Image(systemName: event.include ? "checkmark.square.fill" : "square")
                     .font(.system(size: 16))
-                    .foregroundStyle(event.include ? Theme.accent : Color(hex: 0xB9B09C))
+                    .foregroundStyle(event.include ? Theme.accent : Theme.muted)
             }
             .buttonStyle(.plain)
             .padding(.top, 1)
@@ -205,7 +205,7 @@ private struct ImportEventRow: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .opacity(event.include ? 1 : 0.5)
-        .overlay(alignment: .top) { Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1) }
+        .overlay(alignment: .top) { Rectangle().fill(Theme.hairline).frame(height: 1) }
     }
 
     @ViewBuilder

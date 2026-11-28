@@ -3,7 +3,6 @@ import SwiftUI
 /// 内容区顶部的快速添加栏：输入标题回车即新建，默认值与新建弹窗相同。写法见 QuickAddParser。
 struct QuickAddBar: View {
     @Environment(AppModel.self) private var model
-    @State private var text = ""
     @State private var saving = false
     @FocusState private var focused: Bool
 
@@ -15,14 +14,17 @@ struct QuickAddBar: View {
         + "日期和时刻也可以直接写在标题前面，如「后天下午1点跟腾讯开会」「下午3点开会」"
 
     var body: some View {
-        let draft = model.parseQuickAdd(text)
+        // 草稿放在 model 里：换页转场会重建这一块，@State 会被丢掉。
+        @Bindable var model = model
+        let draft = model.parseQuickAdd(model.quickAddDraft)
         HStack(spacing: 8) {
             // 鼠标移到 ＋ 上弹出写法说明（主题样式），点示例填进输入框。
             QuickAddGuideAnchor { example in
-                text = text.isEmpty ? example : text + " " + example
+                let current = model.quickAddDraft
+                model.quickAddDraft = current.isEmpty ? example : current + " " + example
                 focused = true
             }
-            TextField("", text: $text, prompt: Text(Self.prompt))
+            TextField("", text: $model.quickAddDraft, prompt: Text(Self.prompt))
                 .textFieldStyle(.plain)
                 .font(.system(size: 13))
                 .focused($focused)
@@ -57,7 +59,7 @@ struct QuickAddBar: View {
         Task {
             let ok = await model.createTask(input)
             saving = false
-            if ok { text = "" }
+            if ok { model.quickAddDraft = "" }
         }
     }
 }

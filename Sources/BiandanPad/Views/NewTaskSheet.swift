@@ -192,7 +192,7 @@ struct NewTaskSheet: View {
                     }
                     .padding(10)
                     .overlay(alignment: .top) {
-                        Rectangle().fill(Color(hex: 0xF0EADD)).frame(height: 1)
+                        Rectangle().fill(Theme.hairline).frame(height: 1)
                     }
                 }
             }
@@ -325,7 +325,7 @@ struct DeleteTaskSheet: View {
                     Spacer(minLength: 0)
                 }
                 .font(.system(size: 12.5))
-                .foregroundStyle(Color(hex: 0x4A453C))
+                .foregroundStyle(Theme.label)
                 .padding(10)
             }
 

@@ -52,7 +52,7 @@ struct ImportSyncStatsView: View {
 
     private func toolbar(_ summary: ImportSyncSummary) -> some View {
         HStack(spacing: 12) {
-            ThemedSegmented(selection: $range,
+            HeaderSegmented(selection: $range,
                             options: StatsRange.allCases.map { ThemeOption(value: $0, title: $0.title) })
             Text(verbatim: "\(summary.start.shortTitle) – \(summary.end.shortTitle)")
                 .font(.system(size: 12))
@@ -236,7 +236,7 @@ private struct ImportHealthRow: View {
         if !source.kind.syncs { return ("一次性导入", Theme.subtext) }
         if !source.enabled && source.autoPaused { return ("失败过多 · 已暂停", Theme.overdue) }
         if !source.enabled { return ("已暂停", Theme.subtext) }
-        if let retry = source.retryAt, retry > Date() { return ("退避中", Color(hex: 0xE8890C)) }
+        if let retry = source.retryAt, retry > Date() { return ("退避中", Theme.warning) }
         if source.failures > 0 { return ("最近失败", Theme.overdue) }
         return ("正常", Theme.done)
     }

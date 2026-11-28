@@ -26,7 +26,7 @@ struct SelectionCheckbox: View {
 
     var body: some View {
         let icon = on ? "checkmark.square.fill" : "square"
-        let color: Color = on ? Theme.accent : Color(hex: 0xB9B09C)
+        let color: Color = on ? Theme.accent : Theme.muted
         Button(action: action) {
             Image(systemName: icon)
                 .font(.system(size: 17))
@@ -84,9 +84,9 @@ private struct BatchButton: View {
         .opacity(isEnabled ? 1 : 0.4)
     }
 
-    private var iconColor: Color { filled ? .white : tint }
+    private var iconColor: Color { filled ? Theme.onAccent : tint }
 
-    private var textColor: Color { filled ? .white : Theme.text }
+    private var textColor: Color { filled ? Theme.onAccent : Theme.text }
 
     private var fillColor: Color {
         if filled { return hovering && isEnabled ? tint.opacity(0.85) : tint }
@@ -293,7 +293,7 @@ struct BatchDeleteSheet: View {
                     Spacer(minLength: 0)
                 }
                 .font(.system(size: 12.5))
-                .foregroundStyle(Color(hex: 0x4A453C))
+                .foregroundStyle(Theme.label)
                 .padding(10)
             }
             Text("删除会同步到云端和其他设备，不能用 ⌘Z 撤销。")

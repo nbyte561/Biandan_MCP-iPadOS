@@ -79,7 +79,7 @@ enum TimelineStyle {
     static let dot: CGFloat = 10
     static let labelHeight: CGFloat = 20
     /// 没设分类颜色、又不重要不紧急的待办用中性色，避免和「已完成」的绿色混淆。
-    static let neutral = Color(hex: 0x7A869A)
+    static let neutral = Color.adaptive(0x7A869A, dark: 0x93A0B5)
 
     static func fallbackTint(_ item: OccurrenceItem) -> Color {
         item.task.important || item.task.urgent ? item.task.quadrant.tint : neutral
@@ -87,16 +87,18 @@ enum TimelineStyle {
 
     /// 一天的天色：深夜 → 清晨 → 正午 → 傍晚 → 入夜。
     static let dayGradient = LinearGradient(stops: [
-        .init(color: Color(hex: 0x3D4A7A), location: 0),
-        .init(color: Color(hex: 0x8C9BD0), location: 0.2),
-        .init(color: Color(hex: 0xFFDF8A), location: 0.3),
-        .init(color: Color(hex: 0xF5B800), location: 0.5),
-        .init(color: Color(hex: 0xF08A24), location: 0.74),
-        .init(color: Color(hex: 0x8E5BD6), location: 0.86),
-        .init(color: Color(hex: 0x3D4A7A), location: 1),
+        .init(color: Color.adaptive(0x3D4A7A, dark: 0x6C7EB8), location: 0),
+        .init(color: Color.adaptive(0x8C9BD0, dark: 0xA7B4E0), location: 0.2),
+        .init(color: Color.adaptive(0xFFDF8A, dark: 0xFFE6A3), location: 0.3),
+        .init(color: Color.adaptive(0xF5B800, dark: 0xFFC61A), location: 0.5),
+        .init(color: Color.adaptive(0xF08A24, dark: 0xFF9F45), location: 0.74),
+        .init(color: Theme.purple, location: 0.86),
+        .init(color: Color.adaptive(0x3D4A7A, dark: 0x6C7EB8), location: 1),
     ], startPoint: .leading, endPoint: .trailing)
 
-    static let rangeGradient = LinearGradient(colors: [Color(hex: 0xFFEDB5), Color(hex: 0xF5C23A), Color(hex: 0xF08A24)],
+    static let rangeGradient = LinearGradient(colors: [Color.adaptive(0xFFEDB5, dark: 0x6B5416),
+                                                      Color.adaptive(0xF5C23A, dark: 0xE0AC25),
+                                                      Color.adaptive(0xF08A24, dark: 0xFF9F45)],
                                               startPoint: .leading, endPoint: .trailing)
 
     static func barTop(lanes: Int) -> CGFloat { CGFloat(lanes) * laneHeight + 4 }
@@ -133,7 +135,7 @@ private struct TimelineDot: View {
 
     var body: some View {
         let fill: Color = hollow ? Theme.card : color
-        let ring: Color = hollow ? color : (selected ? Theme.text : Color.white)
+        let ring: Color = hollow ? color : (selected ? Theme.text : Theme.thumb)
         let ringWidth: CGFloat = hollow ? (selected ? 3 : 2.2) : (selected ? 2 : 1.5)
         Circle()
             .fill(fill)
@@ -142,7 +144,7 @@ private struct TimelineDot: View {
                 if item.status == .completed {
                     Image(systemName: "checkmark")
                         .font(.system(size: 5.5, weight: .black))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Theme.onAccent)
                 }
             }
             .frame(width: TimelineStyle.dot, height: TimelineStyle.dot)

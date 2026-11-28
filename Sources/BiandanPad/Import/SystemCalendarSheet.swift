@@ -60,7 +60,7 @@ struct SystemCalendarSheet: View {
         HStack(spacing: 10) {
             Image(systemName: "envelope")
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(Color(hex: 0x8E5BD6))
+                .foregroundStyle(Theme.purple)
             VStack(alignment: .leading, spacing: 1) {
                 Text("添加邮箱账户").font(.system(size: 16, weight: .heavy)).foregroundStyle(Theme.text)
                 Text(verbatim: "读取 Mac「互联网账户」里的日历")
@@ -236,7 +236,7 @@ private struct SystemCalendarRow: View {
 
     var body: some View {
         let icon: String = added ? "checkmark.circle.fill" : (on ? "checkmark.square.fill" : "square")
-        let iconColor: Color = added || on ? Theme.accent : Color(hex: 0xB9B09C)
+        let iconColor: Color = added || on ? Theme.accent : Theme.muted
         let target = AppModel.caldavSourceName(account: info.account, calendar: info.title)
         let detail = "\(info.kindTitle) · 导入到分类「\(target)」"
         let faded: Double = added ? 0.55 : (on ? 1 : 0.7)

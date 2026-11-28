@@ -14,7 +14,8 @@ if [ -d "$ROOT/../vendor/GRDB.swift" ]; then
 fi
 SDK="$(xcrun --sdk iphonesimulator --show-sdk-path)"
 TOOLCHAIN_BIN="$(dirname "$(xcrun --find swift)")"
-OUT="$ROOT/build"
+# 允许换一个组装目录，原因同 package_ipa.sh。
+OUT="${BIANDAN_BUILD_DIR:-$ROOT/build}"
 APP="$OUT/BiandanPad.app"
 
 CONFIGURATION_FILE="/tmp/biandan-ios-dest.json"
@@ -55,15 +56,13 @@ if [ -d "$(dirname "$BIN")/GRDB_GRDB.bundle" ]; then
   cp -R "$(dirname "$BIN")/GRDB_GRDB.bundle" "$APP/"
 fi
 
-# 图标：官方 1024 图标，模拟器按 CFBundleIconFiles 找这几个尺寸。
-ICON_SRC="$ROOT/docs/AppIcon-1024.png"
-if [ -f "$ICON_SRC" ]; then
-  for size in 60 76 120 152 167; do
-    sips -z "$size" "$size" "$ICON_SRC" --out "$APP/AppIcon${size}.png" >/dev/null 2>&1 || true
-  done
-fi
+# 图标：和真机包走同一套 actool 资源，浅色 / 深色都能在模拟器里看到。
+PARTIAL_PLIST="$OUT/asset-info.plist"
+"$ROOT/Tools/make_appicon.sh" "$APP" iphonesimulator 17.0 "$PARTIAL_PLIST"
 
-cat > "$APP/Info.plist" <<'PLIST'
+BUNDLE_VERSION="${BIANDAN_VERSION:-0.1.0}"
+BUNDLE_BUILD="${BIANDAN_BUILD:-1}"
+cat > "$APP/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -83,9 +82,9 @@ cat > "$APP/Info.plist" <<'PLIST'
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.1.0</string>
+    <string>${BUNDLE_VERSION}</string>
     <key>CFBundleVersion</key>
-    <string>1</string>
+    <string>${BUNDLE_BUILD}</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>UIDeviceFamily</key>
@@ -99,25 +98,8 @@ cat > "$APP/Info.plist" <<'PLIST'
         <string>UIInterfaceOrientationLandscapeLeft</string>
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
-    <key>CFBundleIcons</key>
-    <dict>
-        <key>CFBundlePrimaryIcon</key>
-        <dict>
-            <key>CFBundleIconFiles</key>
-            <array>
-                <string>AppIcon60</string>
-                <string>AppIcon76</string>
-                <string>AppIcon120</string>
-                <string>AppIcon152</string>
-                <string>AppIcon167</string>
-            </array>
-        </dict>
-    </dict>
     <key>UILaunchScreen</key>
-    <dict>
-        <key>UIColorName</key>
-        <string></string>
-    </dict>
+    <dict/>
     <key>UIApplicationSceneManifest</key>
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>
@@ -125,8 +107,6 @@ cat > "$APP/Info.plist" <<'PLIST'
     </dict>
     <key>UIRequiresFullScreen</key>
     <false/>
-    <key>UIStatusBarStyle</key>
-    <string>UIStatusBarStyleDarkContent</string>
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsLocalNetworking</key>
@@ -153,6 +133,11 @@ cat > "$APP/Info.plist" <<'PLIST'
 </dict>
 </plist>
 PLIST
+
+# actool 生成的 CFBundleIcons / CFBundleIconName（含深色图标引用）并进 Info.plist
+if [ -f "$PARTIAL_PLIST" ]; then
+  /usr/libexec/PlistBuddy -c "Merge ${PARTIAL_PLIST}" "$APP/Info.plist" >/dev/null 2>&1 || true
+fi
 
 echo "==> 临时签名"
 codesign --force --sign - --timestamp=none "$APP" 2>&1 | tail -2 || true

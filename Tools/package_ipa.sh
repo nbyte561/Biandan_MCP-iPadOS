@@ -24,9 +24,11 @@ APP_NAME="便单"
 
 SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
 TOOLCHAIN_BIN="$(dirname "$(xcrun --find swift)")"
-OUT="$ROOT/build/device"
+# 允许换一个组装目录：某些环境（沙箱、受管机器）会拦住 build/ 下的删除，
+# 导致 actool / codesign 没法替换旧文件、留下 ~tmp 和 .cstemp 残渣。
+OUT="${BIANDAN_BUILD_DIR:-$ROOT/build/device}"
 APP="$OUT/Payload/BiandanPad.app"
-DIST="$ROOT/dist"
+DIST="${BIANDAN_DIST_DIR:-$ROOT/dist}"
 
 if [ "$CONFIG" = "release" ]; then PLATFORM_CONFIG="Release"; else PLATFORM_CONFIG="Debug"; fi
 
@@ -53,57 +55,11 @@ if [ -d "$(dirname "$BIN")/GRDB_GRDB.bundle" ]; then
   cp -R "$(dirname "$BIN")/GRDB_GRDB.bundle" "$APP/"
 fi
 
-# 图标：用 actool 编成 Assets.car，这样 iPad 桌面图标和各处缩略图都正常。
-ICON_SRC="$ROOT/docs/AppIcon-1024.png"
-ASSET_SRC="$OUT/assets"
-rm -rf "$ASSET_SRC"
-mkdir -p "$ASSET_SRC/AppIcon.appiconset"
+# 图标：浅色 + 深色两套，交给 actool 编成 Assets.car。
+# 散装 PNG + CFBundleIconFiles 只能声明一套，深色模式下系统会垫底板（见 Tools/make_appicon.sh 注释）。
+echo "==> 编图标（浅色 + 深色）"
 PARTIAL_PLIST="$OUT/asset-info.plist"
-
-if [ -f "$ICON_SRC" ]; then
-  echo "==> 生成图标"
-  gen_icon() { # $1=尺寸 $2=文件名
-    sips -z "$1" "$1" "$ICON_SRC" --out "$ASSET_SRC/AppIcon.appiconset/$2" >/dev/null 2>&1
-  }
-  gen_icon 20   "icon-20.png"
-  gen_icon 40   "icon-20@2x.png"
-  gen_icon 29   "icon-29.png"
-  gen_icon 58   "icon-29@2x.png"
-  gen_icon 40   "icon-40.png"
-  gen_icon 80   "icon-40@2x.png"
-  gen_icon 76   "icon-76.png"
-  gen_icon 152  "icon-76@2x.png"
-  gen_icon 167  "icon-83.5@2x.png"
-  gen_icon 1024 "icon-1024.png"
-
-  cat > "$ASSET_SRC/AppIcon.appiconset/Contents.json" <<'JSON'
-{
-  "images" : [
-    { "filename" : "icon-20.png",     "idiom" : "ipad", "scale" : "1x", "size" : "20x20" },
-    { "filename" : "icon-20@2x.png",  "idiom" : "ipad", "scale" : "2x", "size" : "20x20" },
-    { "filename" : "icon-29.png",     "idiom" : "ipad", "scale" : "1x", "size" : "29x29" },
-    { "filename" : "icon-29@2x.png",  "idiom" : "ipad", "scale" : "2x", "size" : "29x29" },
-    { "filename" : "icon-40.png",     "idiom" : "ipad", "scale" : "1x", "size" : "40x40" },
-    { "filename" : "icon-40@2x.png",  "idiom" : "ipad", "scale" : "2x", "size" : "40x40" },
-    { "filename" : "icon-76.png",     "idiom" : "ipad", "scale" : "1x", "size" : "76x76" },
-    { "filename" : "icon-76@2x.png",  "idiom" : "ipad", "scale" : "2x", "size" : "76x76" },
-    { "filename" : "icon-83.5@2x.png","idiom" : "ipad", "scale" : "2x", "size" : "83.5x83.5" },
-    { "filename" : "icon-1024.png",   "idiom" : "ios-marketing", "scale" : "1x", "size" : "1024x1024" }
-  ],
-  "info" : { "author" : "xcode", "version" : 1 }
-}
-JSON
-
-  xcrun actool "$ASSET_SRC" \
-    --compile "$APP" \
-    --platform iphoneos \
-    --minimum-deployment-target 17.0 \
-    --target-device ipad \
-    --app-icon AppIcon \
-    --compress-pngs \
-    --output-partial-info-plist "$PARTIAL_PLIST" \
-    --output-format human-readable-text 2>&1 | grep -Ev "^$" | tail -3 || true
-fi
+"$ROOT/Tools/make_appicon.sh" "$APP" iphoneos 17.0 "$PARTIAL_PLIST"
 
 echo "==> 写 Info.plist"
 cat > "$APP/Info.plist" <<PLIST
@@ -149,10 +105,7 @@ cat > "$APP/Info.plist" <<PLIST
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
     <key>UILaunchScreen</key>
-    <dict>
-        <key>UIColorName</key>
-        <string></string>
-    </dict>
+    <dict/>
     <key>UIApplicationSceneManifest</key>
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>
@@ -160,8 +113,6 @@ cat > "$APP/Info.plist" <<PLIST
     </dict>
     <key>UIRequiresFullScreen</key>
     <false/>
-    <key>UIStatusBarStyle</key>
-    <string>UIStatusBarStyleDarkContent</string>
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsLocalNetworking</key>
